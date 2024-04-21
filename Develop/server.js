@@ -21,20 +21,20 @@ app.get('*', (req, res) =>
 );
 app.get('/api/notes', (req, res) => {
     
-    readFile("./db/db.json").then((data) => res.json(JSON.parse(data)))
+    readFromFile(database).then((data) => res.json(JSON.parse(data)))
 });
 app.post('/api/notes', (req, res) => {
-    const { title , note } = req.body;
+    const { title ,text} = req.body;
     if(req.body) {
         const newNote = {
             title,
-            note,
-            note_id: uuid()
+            text,
+            title_id: uuid()
         }
     
      
     
-    readAndAppend(newNote, database);
+    readAndAppend(newNote, JSON.stringify(database)); // Convert database array to a string
     res.json('note added successfully')
     }else {
         res.error('error adding note')
