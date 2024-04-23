@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 app.use(express.json());
-app.use(express.static('public'));ç
+app.use(express.static('public'))
 
 app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
@@ -19,7 +19,9 @@ app.get('/notes', (req, res) =>
 
 app.get('/api/notes', (req, res) => {
     
-    fs.readFile('./db/db.json').then((data) => res.json(JSON.parse(data)))
+    fs.readFile('./db/db.json' , "utf-8", (err, data) => {
+        res.json(JSON.parse(data))
+    })
 });
 app.post('/api/notes', (req, res) => {
     const note = JSON.parse(fs.readFileSync('./db/db.json'))
@@ -29,6 +31,16 @@ app.post('/api/notes', (req, res) => {
     fs.writeFileSync('./db/db.json', JSON.stringify(note))
     res.json(note)
 })
+app.delete('/api/notes/:id', (req, res)=> {
+    const note = JSON.parse(fs.readFileSync('./db/db.json'))
+    const newNote = note.filter(note => note.id !== req.params.id)
+    fs.writeFileSync('./db/db.json', JSON.stringify(newNote))
+    res.json(newNote)
+})
+
+
+
+
 app.get('*', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
